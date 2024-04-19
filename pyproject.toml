@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tiktokapipy"
+version = "0.2.4.post2"
+authors = [
+    { name="Russell Newton", email="russell.newton01@gmail.com" },
+]
+description = "Asyncio TikTok data scraping tool"
+readme = "README.md"
+requires-python = ">=3.8"
+
+keywords = ["tiktok", "python3", "scraper", "unofficial", "tiktok-scraper", "tiktok scraper", "asyncio", "playwright-python"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Games/Entertainment",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "playwright~=1.29",
+    "pydantic>=2",
+    "requests",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+    "pytest-cov",
+    "pytest-asyncio",
+    "tox",
+]
+docs = [
+    "toml",
+    "docutils>=0.18",
+    "sphinx<7",
+    "sphinx-rtd-theme",
+    "sphinx-autodoc-typehints",
+    "sphinx-tabs",
+    "mock",
+]
+download = [
+    "yt-dlp"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Russell-Newton/TikTokPy"
+"Documentation" = "https://tiktokpy.readthedocs.io/en/latest/"
