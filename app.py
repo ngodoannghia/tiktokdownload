@@ -123,9 +123,6 @@ async def download_video(link):
     url_video_fullhd = video.get("fullhd")
     url_video_hd = video.get("hd")
     
-    with open("/home/j3s/NghiaND/TikTokPy/outputs/response.json", 'w', encoding='utf-8') as f:
-        json.dump(all_info, f, indent=4)
-    
     if url_video_fullhd is not None:
         flash_fullhd = True
     elif url_video_hd is not None:
@@ -223,5 +220,5 @@ def serve_static(filename):
     return send_from_directory(static_folder, filename)
 
 if __name__ == '__main__':
-    app.run(debug = True, host='0.0.0.0', port=2312)
-    # app.run(debug = False, host='0.0.0.0', port=8000, use_reloader=False)
+    # app.run(debug = True, host='0.0.0.0', port=2312)
+    app.run(debug = False, host='0.0.0.0', port=8000, use_reloader=False)

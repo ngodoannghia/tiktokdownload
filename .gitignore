@@ -168,3 +168,4 @@ cython_debug/
 examples/
 cov_report.xml
 static/
+notebook/
