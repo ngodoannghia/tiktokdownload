@@ -235,11 +235,12 @@ if (navigator.webdriver === false) {
         video['stats'] = stats_info
         video["desc"] = video_detail.get("shareMeta").get("desc")
         
-        for item in video_bitrateInfo:
-            if item.get("GearName") == "adapt_lowest_1080_1":
-                video["fullhd"] = item.get("PlayAddr").get("UrlList")[0]
-            elif item.get("GearName") == "adapt_lower_720_1":
-                video["hd"] = item.get("PlayAddr").get("UrlList")[0]
+        if video_bitrateInfo is not None:
+            for item in video_bitrateInfo:
+                if item.get("GearName") == "adapt_lowest_1080_1":
+                    video["fullhd"] = item.get("PlayAddr").get("UrlList")[0]
+                elif item.get("GearName") == "adapt_lower_720_1":
+                    video["hd"] = item.get("PlayAddr").get("UrlList")[0]
                 
         return video, user_info, music_info, video_info, video_detail
 

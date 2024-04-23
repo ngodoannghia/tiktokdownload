@@ -197,7 +197,78 @@ class TikTokAPI:
             get_video_detail_sync(video_id, self.context)
         )
         return self._extract_video_from_response(response)
+    
+    
+    def video_user_music(
+        self,
+        link_or_id: Union[int, str],
+    ) -> Video:
+        """
+        Retrieve data on a :class:`.Video` from TikTok. If the video is a slideshow, :attr:`.emulate_mobile` must be
+        set to ``True`` at API initialization or this method will raise a :exc:`TikTokAPIError`.
 
+        :param link_or_id: The link to the video or its unique ID.
+        :return: A :class:`.Video` object containing the scraped data
+        :rtype: :class:`.Video`
+        """
+        if isinstance(link_or_id, str):
+            if is_mobile_share_link(link_or_id):
+                self.context.clear_cookies()
+                page: Page = self.context.new_page()
+                page.add_init_script(
+                    """
+    if (navigator.webdriver === false) {
+        // Post Chrome 89.0.4339.0 and already good
+    } else if (navigator.webdriver === undefined) {
+        // Pre Chrome 89.0.4339.0 and already good
+    } else {
+        // Pre Chrome 88.0.4291.0 and needs patching
+        delete Object.getPrototypeOf(navigator).webdriver
+    }
+                """
+                )
+
+                def ignore_scripts(route: Route):
+                    if route.request.resource_type == "script":
+                        return route.abort()
+                    return route.continue_()
+
+                page.route("**/*", ignore_scripts)
+                page.goto(link_or_id, wait_until=None)
+                page.wait_for_selector("#SIGI_STATE", state="attached")
+
+                link_or_id = page.url
+
+                page.close()
+            video_id = link_or_id.split("/")[-1].split("?")[0]
+        else:
+            video_id = link_or_id
+            
+        video_detail =  get_video_detail_sync(video_id, self.context)
+        
+        response = VideoPage.model_validate(
+            get_video_detail_sync(video_id, self.context)
+        )
+        
+        video = {}
+        user_info = video_detail.get("itemInfo").get("itemStruct").get("author")
+        music_info = video_detail.get("itemInfo").get("itemStruct").get("music")
+        video_info = video_detail.get("itemInfo").get("itemStruct").get("video")
+        stats_info = video_detail.get("itemInfo").get("itemStruct").get("stats")
+        video_bitrateInfo = video_info.get("bitrateInfo")
+        video['normal'] = video_info.get("playAddr")
+        video['stats'] = stats_info
+        video["desc"] = video_detail.get("shareMeta").get("desc")
+        
+        for item in video_bitrateInfo:
+            if item.get("GearName") == "adapt_lowest_1080_1":
+                video["fullhd"] = item.get("PlayAddr").get("UrlList")[0]
+            elif item.get("GearName") == "adapt_lower_720_1":
+                video["hd"] = item.get("PlayAddr").get("UrlList")[0]
+                
+        return video, user_info, music_info, video_info, video_detail
+    
+    
     def _scrape_data(
         self,
         link: str,
@@ -330,6 +401,8 @@ if (navigator.webdriver === false) {
         video._api = self
 
         return video
+
+    
 
 
 __all__ = ["TikTokAPI"]
